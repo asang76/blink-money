@@ -1,11 +1,11 @@
 import { FC } from "react"
-import { Image, ImageStyle, TextStyle, View, ViewStyle } from "react-native"
+import { TextStyle, View, ViewStyle } from "react-native"
 
+import { Avatar } from "@/components/Avatar"
 import { Button } from "@/components/Button"
 import { Screen } from "@/components/Screen"
 import { Text } from "@/components/Text"
 import { useAuth } from "@/context/AuthContext"
-import { isRTL } from "@/i18n"
 import type { AppStackScreenProps } from "@/navigators/navigationTypes"
 import { useAppTheme } from "@/theme/context"
 import { $styles } from "@/theme/styles"
@@ -13,19 +13,15 @@ import type { ThemedStyle } from "@/theme/types"
 import { useHeader } from "@/utils/useHeader"
 import { useSafeAreaInsetsStyle } from "@/utils/useSafeAreaInsetsStyle"
 
-const welcomeLogo = require("@assets/images/logo.png")
-const welcomeFace = require("@assets/images/welcome-face.png")
-
 interface WelcomeScreenProps extends AppStackScreenProps<"Welcome"> {}
 
-export const WelcomeScreen: FC<WelcomeScreenProps> = function WelcomeScreen(_props) {
-  const { themed, theme } = useAppTheme()
-
-  const { navigation } = _props
+export const WelcomeScreen: FC<WelcomeScreenProps> = function WelcomeScreen(props) {
+  const { navigation } = props
+  const { themed } = useAppTheme()
   const { logout } = useAuth()
 
   function goNext() {
-    navigation.navigate("Demo", { screen: "DemoShowroom", params: {} })
+    navigation.navigate("Main", { screen: "Home" })
   }
 
   useHeader(
@@ -41,29 +37,26 @@ export const WelcomeScreen: FC<WelcomeScreenProps> = function WelcomeScreen(_pro
   return (
     <Screen preset="fixed" contentContainerStyle={$styles.flex1}>
       <View style={themed($topContainer)}>
-        <Image style={themed($welcomeLogo)} source={welcomeLogo} resizeMode="contain" />
+        <Avatar icon="zap" size={88} />
+        <Text text="BlinkMoney" weight="bold" size="xxl" style={themed($wordmark)} />
+
+        <Text text="Master your money." weight="bold" size="xl" style={themed($headline)} />
         <Text
-          testID="welcome-heading"
-          style={themed($welcomeHeading)}
-          tx="welcomeScreen:readyForLaunch"
-          preset="heading"
-        />
-        <Text tx="welcomeScreen:exciting" preset="subheading" />
-        <Image
-          style={$welcomeFace}
-          source={welcomeFace}
-          resizeMode="contain"
-          tintColor={theme.colors.palette.neutral900}
+          text="Track spending, build habits, and grow your wealth — one blink at a time."
+          size="sm"
+          style={themed($subheading)}
         />
       </View>
 
       <View style={themed([$bottomContainer, $bottomContainerInsets])}>
-        <Text tx="welcomeScreen:postscript" size="md" />
+        <Text text="Free to join. No credit card required." size="xs" style={themed($footnote)} />
 
         <Button
           testID="next-screen-button"
-          preset="reversed"
-          tx="welcomeScreen:letsGo"
+          text="GET STARTED"
+          preset="filled"
+          style={themed($ctaButton)}
+          textStyle={themed($ctaButtonText)}
           onPress={goNext}
         />
       </View>
@@ -72,39 +65,51 @@ export const WelcomeScreen: FC<WelcomeScreenProps> = function WelcomeScreen(_pro
 }
 
 const $topContainer: ThemedStyle<ViewStyle> = ({ spacing }) => ({
-  flexShrink: 1,
-  flexGrow: 1,
-  flexBasis: "57%",
+  flex: 1,
+  alignItems: "center",
   justifyContent: "center",
   paddingHorizontal: spacing.lg,
+  gap: spacing.xs,
+})
+
+const $wordmark: ThemedStyle<TextStyle> = ({ spacing }) => ({
+  marginTop: spacing.md,
+  marginBottom: spacing.xl,
+})
+
+const $headline: ThemedStyle<TextStyle> = () => ({
+  textAlign: "center",
+})
+
+const $subheading: ThemedStyle<TextStyle> = ({ colors, spacing }) => ({
+  color: colors.textDim,
+  textAlign: "center",
+  marginTop: spacing.xs,
 })
 
 const $bottomContainer: ThemedStyle<ViewStyle> = ({ colors, spacing }) => ({
-  flexShrink: 1,
-  flexGrow: 0,
-  flexBasis: "43%",
-  backgroundColor: colors.palette.neutral100,
-  borderTopLeftRadius: 16,
-  borderTopRightRadius: 16,
+  backgroundColor: colors.surfaceContainer,
+  borderTopWidth: 1,
+  borderTopColor: colors.border,
+  borderTopLeftRadius: 24,
+  borderTopRightRadius: 24,
   paddingHorizontal: spacing.lg,
-  justifyContent: "space-around",
+  paddingTop: spacing.lg,
+  paddingBottom: spacing.lg,
+  gap: spacing.md,
 })
 
-const $welcomeLogo: ThemedStyle<ImageStyle> = ({ spacing }) => ({
-  height: 88,
-  width: "100%",
-  marginBottom: spacing.xxl,
+const $footnote: ThemedStyle<TextStyle> = ({ colors }) => ({
+  color: colors.textDim,
+  textAlign: "center",
 })
 
-const $welcomeFace: ImageStyle = {
-  height: 169,
-  width: 269,
-  position: "absolute",
-  bottom: -47,
-  right: -80,
-  transform: [{ scaleX: isRTL ? -1 : 1 }],
-}
+const $ctaButton: ThemedStyle<ViewStyle> = ({ colors }) => ({
+  backgroundColor: colors.tint,
+  borderWidth: 0,
+  borderRadius: 12,
+})
 
-const $welcomeHeading: ThemedStyle<TextStyle> = ({ spacing }) => ({
-  marginBottom: spacing.md,
+const $ctaButtonText: ThemedStyle<TextStyle> = ({ colors }) => ({
+  color: colors.onPrimary,
 })

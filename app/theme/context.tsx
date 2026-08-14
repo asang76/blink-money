@@ -7,7 +7,7 @@ import {
   useEffect,
   useMemo,
 } from "react"
-import { StyleProp, useColorScheme } from "react-native"
+import { StyleProp } from "react-native"
 import {
   DarkTheme as NavDarkTheme,
   DefaultTheme as NavDefaultTheme,
@@ -51,14 +51,11 @@ export interface ThemeProviderProps {
  *
  * Documentation: https://docs.infinite.red/ignite-cli/boilerplate/app/theme/Theming/
  */
-export const ThemeProvider: FC<PropsWithChildren<ThemeProviderProps>> = ({
-  children,
-  initialContext,
-}) => {
-  // The operating system theme:
-  const systemColorScheme = useColorScheme()
-  // Our saved theme context: can be "light", "dark", or undefined (system theme)
-  const [themeScheme, setThemeScheme] = useMMKVString("ignite.themeScheme", storage)
+// Note: `initialContext` from ThemeProviderProps is intentionally unused — see themeContext below.
+export const ThemeProvider: FC<PropsWithChildren<ThemeProviderProps>> = ({ children }) => {
+  // Our saved theme context override, kept around (unread for now) so a future light mode can
+  // resume honoring it without re-threading the MMKV wiring.
+  const [, setThemeScheme] = useMMKVString("ignite.themeScheme", storage)
 
   /**
    * This function is used to set the theme context and is exported from the useAppTheme() hook.
@@ -74,14 +71,17 @@ export const ThemeProvider: FC<PropsWithChildren<ThemeProviderProps>> = ({
   )
 
   /**
-   * initialContext is the theme context passed in from the app.tsx file and always takes precedence.
-   * themeScheme is the value from MMKV. If undefined, we fall back to the system theme
-   * systemColorScheme is the value from the device. If undefined, we fall back to "light"
+   * BlinkMoney is a dark-only app (see theme/colorsDark.ts) — the "Ink & Neon" brand is designed
+   * exclusively for a true-black surface, so we always resolve "dark" here regardless of
+   * initialContext, saved override, or system color scheme. setThemeContextOverride is kept as a
+   * no-op passthrough so the API surface (and any debug toggles) don't need to change if a real
+   * light mode is designed later — flip this back to the commented-out logic at that point.
    */
   const themeContext: ImmutableThemeContextModeT = useMemo(() => {
-    const t = initialContext || themeScheme || (!!systemColorScheme ? systemColorScheme : "light")
-    return t === "dark" ? "dark" : "light"
-  }, [initialContext, themeScheme, systemColorScheme])
+    return "dark"
+    // const t = initialContext || themeScheme || (!!systemColorScheme ? systemColorScheme : "light")
+    // return t === "dark" ? "dark" : "light"
+  }, [])
 
   const navigationTheme: NavTheme = useMemo(() => {
     switch (themeContext) {

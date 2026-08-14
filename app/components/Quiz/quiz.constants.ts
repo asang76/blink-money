@@ -1,0 +1,3 @@
+export const QUESTION_DURATION_SECONDS = 30
+export const PERFECT_SCORE_BONUS_XP = 20
+export const LOW_SCORE_THRESHOLD = 0.5

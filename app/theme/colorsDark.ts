@@ -1,50 +1,78 @@
+/**
+ * BlinkMoney "Ink & Neon" palette — dark theme.
+ * Source: DESIGN.md (prose spec) — Dark Minimalism, true-black surfaces, singular lime accent.
+ *
+ * BlinkMoney is a dark-only app by design (see theme/context.tsx), so colors.ts (the "light"
+ * theme file) intentionally mirrors this file exactly. Keeping both files means the Theme
+ * plumbing (light/dark switching, per-theme spacing, etc.) still works unchanged if a light
+ * mode is ever introduced later — only the values here would need to diverge.
+ */
 const palette = {
-  neutral900: "#FFFFFF",
-  neutral800: "#F4F2F1",
-  neutral700: "#D7CEC9",
-  neutral600: "#B6ACA6",
-  neutral500: "#978F8A",
-  neutral400: "#564E4A",
-  neutral300: "#3C3836",
-  neutral200: "#191015",
-  neutral100: "#000000",
+  // Neutral ramp, white -> true black. Numbering follows the "dark" convention: the higher the
+  // number, the lighter the color (this is what colors.ts's neutral900 etc. also point at).
+  neutral900: "#FFFFFF", // primary text / headline color
+  neutral800: "#A3A3A3", // secondary / de-prioritized text ("Ghost" text color)
+  neutral700: "#666666", // placeholder text, inactive icons
+  neutral600: "#404040", // subtle dividers, disabled content (interpolated — not explicit in spec)
+  neutral500: "#292929", // card/input border, separators — spec's "Low-Contrast Outline"
+  neutral400: "#1D1D1D", // chips/tags bg, chart grid lines, progress track, glass overlay base
+  neutral300: "#171717", // raised card surface
+  neutral200: "#101010", // primary surface / input field background
+  neutral100: "#050505", // base screen background ("true black")
 
-  primary600: "#F4E0D9",
-  primary500: "#E8C1B4",
-  primary400: "#DDA28E",
-  primary300: "#D28468",
-  primary200: "#C76542",
-  primary100: "#A54F31",
+  // Lime — the spec's singular action color. Used for primary CTAs, positive trends, XP/progress.
+  primary100: "#EAFFB3",
+  primary200: "#D6FF66",
+  primary300: "#C7FF33",
+  primary400: "#C0FF1A",
+  primary500: "#B8FF00", // brand lime, exact spec value
+  primary600: "#93CC00", // pressed/darker state
 
-  secondary500: "#DCDDE9",
-  secondary400: "#BCC0D6",
-  secondary300: "#9196B9",
-  secondary200: "#626894",
-  secondary100: "#41476E",
+  // No second brand hue is defined in the spec — secondary maps onto the neutral ramp so
+  // components that reference it (Toggle/Checkbox/Radio track colors) stay on-brand.
+  secondary100: "#F2F2F2",
+  secondary200: "#D9D9D9",
+  secondary300: "#A3A3A3",
+  secondary400: "#666666",
+  secondary500: "#404040",
 
-  accent500: "#FFEED4",
-  accent400: "#FFE1B2",
-  accent300: "#FDD495",
-  accent200: "#FBC878",
-  accent100: "#FFBB50",
+  // Spec treats lime as the only accent, so "accent" aliases the same ramp as primary.
+  accent100: "#EAFFB3",
+  accent200: "#D6FF66",
+  accent300: "#C7FF33",
+  accent400: "#C0FF1A",
+  accent500: "#B8FF00",
 
-  angry100: "#F2D6CD",
-  angry500: "#C03403",
+  // Error/danger states aren't defined in the spec — inferred to read clearly on true black.
+  angry100: "#3D1210",
+  angry500: "#FF453A",
 
-  overlay20: "rgba(25, 16, 21, 0.2)",
-  overlay50: "rgba(25, 16, 21, 0.5)",
+  overlay20: "rgba(0, 0, 0, 0.4)", // scrim behind sheets/modals
+  overlay50: "rgba(29, 29, 29, 0.8)", // spec's "Glassmorphism" fill (#1D1D1D @ 80%)
 } as const
 
 export const colors = {
   palette,
   transparent: "rgba(0, 0, 0, 0)",
-  text: palette.neutral800,
-  textDim: palette.neutral600,
-  background: palette.neutral200,
-  border: palette.neutral400,
+  text: palette.neutral900,
+  textDim: palette.neutral800,
+  background: palette.neutral100,
+  border: palette.neutral500,
   tint: palette.primary500,
-  tintInactive: palette.neutral300,
-  separator: palette.neutral300,
+  tintInactive: palette.neutral700,
+  separator: palette.neutral500,
   error: palette.angry500,
   errorBackground: palette.angry100,
+
+  /**
+   * Additive tokens (beyond Ignite's defaults) needed for the new BlinkMoney screens.
+   */
+  // Primary surface: input fields, secondary panels.
+  surface: palette.neutral200,
+  // Raised card surface: dashboard cards, standard `rounded-xl` containers.
+  surfaceContainer: palette.neutral300,
+  // Text/icon color to use on top of a lime (`tint`) background, e.g. primary button labels.
+  onPrimary: palette.neutral100,
+  // Positive financial trend / success state — alias of tint, named for intent at call sites.
+  success: palette.primary500,
 } as const
